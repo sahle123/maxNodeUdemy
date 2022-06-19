@@ -12,6 +12,11 @@ router.get('/', shopController.getIndex);
 // /shop/products => GET
 router.get('/products', shopController.getProducts);
 
+// N.B. These dynamic routes should go last. Routing is decided from
+// top to bottom; any first match will run and the rest are ignored.
+// /shop/products/<UUID> => GET 
+router.get('/products/:productId', shopController.getProductById);
+
 // /shop/orders => GET
 router.get('/orders', shopController.getOrders);
 

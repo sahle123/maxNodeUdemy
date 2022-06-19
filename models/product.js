@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { v4: uuidv4 } = require('uuid');
+
 const rootDir = require('../utils/path');
 const logger = require('../utils/logger');
 
@@ -40,6 +42,8 @@ module.exports = class Product {
   }
 
   save() {
+    this.id = uuidv4(); // Generate UUID for this new product.
+    
     getAllProductsFromFile((products) => {
       products.push(this);
 
@@ -53,5 +57,12 @@ module.exports = class Product {
   // Data is returned via a callback.
   static fetchAll(cb) {
     getAllProductsFromFile(cb);
+  }
+
+  static getProductById(id, cb) {
+    getAllProductsFromFile(products => {
+      const product = products.find(p => p.id === id);
+      cb(product);
+    });
   }
 }

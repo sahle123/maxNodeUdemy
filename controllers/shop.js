@@ -15,6 +15,19 @@ exports.getProducts = (req, res, next) => {
   });
 };
 
+exports.getProductById = (req, res, next) => {
+  // N.B. .params is provided by Express.js.
+  const prodId = req.params.productId;
+
+  Product.getProductById(prodId, (product) => {
+    console.log(product);
+    res.render('errors/501', {
+      pageTitle: 'Product details',
+      product: product
+    });
+  });
+};
+
 exports.getIndex = (req, res, next) => {
   Product.fetchAll((products) => {
     res.render('shop/index', {
