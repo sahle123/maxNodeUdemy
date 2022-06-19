@@ -4,8 +4,8 @@ const path = require('path');
 const rootDir = require('../utils/path');
 const logger = require('../utils/logger');
 
- // Get fully qualified path based on OS.
- const _p = path.join(
+// Get fully qualified path based on OS.
+const _p = path.join(
   rootDir,
   'data',
   'products.json'
@@ -19,8 +19,8 @@ const getAllProductsFromFile = cb => {
     if (err) {
       logger.logError(err);
     }
-    else if (fileContent.length < 0) {
-      logger.log(`${p} file is empty.`);
+    else if (fileContent.length <= 0) {
+      logger.log(`${_p} file is empty.`);
       return cb([]);
     }
     else {
@@ -32,8 +32,11 @@ const getAllProductsFromFile = cb => {
 
 module.exports = class Product {
 
-  constructor(title) {
+  constructor(title, imageUrl, desc, price) {
     this.title = title;
+    this.imageUrl = imageUrl;
+    this.desc = desc;
+    this.price = price;
   }
 
   save() {
