@@ -21,7 +21,7 @@ exports.getProductById = (req, res, next) => {
 
   Product.getProductById(prodId, (product) => {
     console.log(product);
-    res.render('errors/501', {
+    res.render('shop/product-detail', {
       pageTitle: 'Product details',
       product: product
     });
@@ -44,11 +44,17 @@ exports.getCart = (req, res, next) => {
   });
 };
 
+exports.postCart = (req, res, next) => {
+  // DEV-NOTE: productId name must match name in html form.
+  const prodId = req.body.productId;
+  res.redirect('/shop/cart');
+};
+
 exports.getOrders = (req, res, next) => {
   res.render('shop/orders', {
     pageTitle: 'Orders'
   })
-}
+};
 
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {

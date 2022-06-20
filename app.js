@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // ROUTING MIDDLEWARE
 app.use('/admin', adminRoutes);
 app.use('/shop', shopRoutes);
-app.use('/errors', errorRoutes);
+app.use('/', errorRoutes);
 
 
 // ----------------------------------------------------------------------------

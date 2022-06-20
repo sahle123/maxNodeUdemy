@@ -23,6 +23,9 @@ router.get('/orders', shopController.getOrders);
 // /shop/cart => GET
 router.get('/cart', shopController.getCart);
 
+// /shop/cart => POST
+router.post('/cart', shopController.postCart);
+
 // /shop/checkout => GET
 router.get('/checkout', shopController.getCheckout);
 
