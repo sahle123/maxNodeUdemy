@@ -4,6 +4,9 @@ const errorController = require('../controllers/error');
 
 const router = express.Router();
 
+
+//router.use('/errors/400', errorController.get400);
+
 // 'use' allows us to add a new middleware function.
 // The 'next' function is the next function to be invoked in the middleware pipeline within express.
 // Note that each next() function is called in the order the code is written.
