@@ -10,7 +10,7 @@ app.set('views', './views');
 const errorRoutes = require('./routes/error');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const mongo = require('./utils/database');
+const mongoConnect = require('./utils/database').mongoConnect;
 const logger = require('./utils/logger');
 
 const PORT = 3000;
@@ -37,7 +37,7 @@ app.use('/', errorRoutes);
 // ----------------------------------------------------------------------------
 logger.log('Starting Node.js server...');
 
-mongo.mongoConnect(() => {
+mongoConnect(() => {
   app.listen(PORT, () => {
     logger.log(`Listening on port ${PORT}`);
   });

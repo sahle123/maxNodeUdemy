@@ -1,10 +1,13 @@
 // Controller for anything related to admin services.
+const mongodb = require('mongodb');
+
 const logger = require('../utils/logger');
 
 const errorController = require('./error');
 
 const B = require('../utils/basic');
 const Product = require('../models/product');
+
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -19,20 +22,24 @@ exports.postAddProduct = (req, res, next) => {
   const desc = req.body.desc;
   const price = req.body.price;
 
-  const product = new Product(null, title, imageUrl, desc, price);
-  product.save();
-
-  res.redirect('/shop');
+  const product = new Product(title, imageUrl, desc, price);
+  product
+    .save()
+    .then(result => { res.redirect('/admin/products'); })
+    .catch(err => logger.logError(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products) => {
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin - Products',
-      hasProducts: products.length > 0
-    });
-  });
+  Product
+    .fetchAll()
+    .then(products => {
+      res.render('admin/products', {
+        prods: products,
+        pageTitle: 'Admin - Products',
+        hasProducts: products.length > 0
+      });
+    })
+    .catch(err => logger.logError(err));
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -44,39 +51,43 @@ exports.getEditProduct = (req, res, next) => {
   }
 
   const prodId = req.params.productId;
-  Product.getProductById(prodId, product => {
-
-    if (!product) {
-      req.params.errorMsg = "Could not find product";
-      return errorController.get400(req, res, next);
-    }
-    else {
-      res.render('admin/edit-product', {
-        pageTitle: 'Admin - Edit a product',
-        editing: editMode,
-        product: product
-      });
-    }
-  });
+  Product
+    .getProductById(prodId)
+    .then(product => {
+      if (!product) {
+        req.params.errorMsg = "Could not find product";
+        return errorController.get400(req, res, next);
+      }
+      else {
+        res.render('admin/edit-product', {
+          pageTitle: 'Admin - Edit a product',
+          editing: editMode,
+          product: product
+        });
+      }
+    })
+    .catch(err => logger.logError(err));
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const updatedProduct = new Product(req.body.productId,
+  const updatedProduct = new Product(
     req.body.title,
     req.body.imageUrl,
-    req.body.desc, 
-    req.body.price);
+    req.body.desc,
+    req.body.price,
+    new mongodb.ObjectId(req.body.productId));
 
-  updatedProduct.update();
-  //updatedProduct.save();
-
-  res.redirect('/admin/products');
+  updatedProduct
+    .update()
+    .then(result => { res.redirect('/admin/products'); })
+    .catch(err => logger.logError(err));
 };
 
+// BROKEN
 exports.postDeleteProduct = (req, res, next) => {
 
   // Error checking
-  if(!req.body.productId) {
+  if (!req.body.productId) {
     red.params.errorMsg = "The product does NOT have an ID";
     return errorController.get400(req, res, next);
   }

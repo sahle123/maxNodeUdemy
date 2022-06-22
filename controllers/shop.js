@@ -1,41 +1,48 @@
 // Controller for anything related to the shop services.
+const logger = require('../utils/logger');
 
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((products) => {
-    // Uses the set templating engine (i.e. the 'view engine') and return that template.
-    // Since we set the 'view' global variable in express, we do not need to provide
-    // the full path to the .pug or .ejs file.
-    res.render('shop/product-list', {
-      prods: products,
-      pageTitle: 'All products',
-      hasProducts: products.length > 0
-    });
-  });
+  Product
+    .fetchAll()
+    .then(products => {
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'All products',
+        hasProducts: products.length > 0
+      });
+    })
+    .catch(err => logger.logError(err));;
 };
 
 exports.getProductById = (req, res, next) => {
   // N.B. .params is provided by Express.js.
   const prodId = req.params.productId;
 
-  Product.getProductById(prodId, (product) => {
-    res.render('shop/product-detail', {
-      pageTitle: 'Product details',
-      product: product
-    });
-  });
+  Product
+    .getProductById(prodId)
+    .then(product => {
+      res.render('shop/product-detail', {
+        pageTitle: 'Product details',
+        product: product
+      });
+    })
+    .catch(err => logger.logError(err));;
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll((products) => {
-    res.render('shop/index', {
-      prods: products,
-      pageTitle: 'Index',
-      hasProducts: products.length > 0
-    });
-  });
+  Product
+    .fetchAll()
+    .then(products => {
+      res.render('shop/index', {
+        prods: products,
+        pageTitle: 'Index',
+        hasProducts: products.length > 0
+      });
+    })
+    .catch(err => logger.logError(err));;
 };
 
 exports.getCart = (req, res, next) => {
@@ -46,10 +53,10 @@ exports.getCart = (req, res, next) => {
       const cartProducts = [];
 
       if (cart && products) {
-        for (prod of products) {        
+        for (prod of products) {
           const cartProductData = cart.products.find(p => p.id === prod.id);
-  
-          if(cartProductData) {
+
+          if (cartProductData) {
             cartProducts.push({
               productData: prod,
               qty: cartProductData.qty
@@ -78,7 +85,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteItem = (req, res, next) => {
   const prodId = req.body.productId;
-  
+
   Product.getProductById(prodId, product => {
     Cart.deleteProduct(prodId, product.price);
     res.redirect('/shop/cart');
