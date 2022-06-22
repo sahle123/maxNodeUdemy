@@ -75,7 +75,7 @@ exports.postEditProduct = (req, res, next) => {
     req.body.imageUrl,
     req.body.desc,
     req.body.price,
-    new mongodb.ObjectId(req.body.productId));
+    req.body.productId);
 
   updatedProduct
     .update()
@@ -83,7 +83,6 @@ exports.postEditProduct = (req, res, next) => {
     .catch(err => logger.logError(err));
 };
 
-// BROKEN
 exports.postDeleteProduct = (req, res, next) => {
 
   // Error checking
@@ -93,8 +92,9 @@ exports.postDeleteProduct = (req, res, next) => {
   }
   else {
     const prodId = req.body.productId;
-    Product.deleteById(prodId);
-
-    return res.redirect('/admin/products');
+    Product
+      .deleteProductById(prodId)
+      .then(result => { res.redirect('/admin/products'); })
+      .catch(err => { throw err; });
   }
 };

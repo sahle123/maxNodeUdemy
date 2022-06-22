@@ -15,7 +15,7 @@ class Product {
     this.imageUrl = imageUrl;
     this.desc = desc;
     this.price = price;
-    this._id = id;
+    this._id = new mongodb.ObjectId(id);
   }
 
   // Save Product object to MongoDB.
@@ -40,7 +40,7 @@ class Product {
       const db = getDb();
       return db
         .collection('dummy')
-        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this })
+        .updateOne({ _id: this._id }, { $set: this })
         .then(result => {
           logger.plog(`Successfully updated ${this._id} in Mongo`);
           console.log(result);
@@ -55,6 +55,7 @@ class Product {
     }
   }
 
+  // Fetches all products
   static fetchAll() {
     const db = getDb();
 
@@ -75,10 +76,22 @@ class Product {
   static getProductById(productId) {
     const db = getDb();
 
-    return db.collection('dummy')
+    return db
+      .collection('dummy')
       .findOne({ _id: new mongodb.ObjectId(productId) })
       //.next()
       .then(product => { return product; })
+      .catch(err => { throw err; });
+  }
+
+  // Deletes a single prooduct via its ID.
+  static deleteProductById(productId) {
+    const db = getDb();
+
+    return db
+      .collection('dummy')
+      .deleteOne({ _id: new mongodb.ObjectId(productId) })
+      .then (result => { return result; })
       .catch(err => { throw err; });
   }
 }
