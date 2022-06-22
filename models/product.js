@@ -3,6 +3,8 @@ const path = require('path');
 
 const { v4: uuidv4 } = require('uuid');
 
+const getDb = require('../utils/database').getDb;
+
 const rootDir = require('../utils/path');
 const logger = require('../utils/logger');
 const B = require('../utils/basic');
