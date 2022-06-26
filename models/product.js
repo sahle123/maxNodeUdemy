@@ -14,7 +14,7 @@ class Product {
     this.title = title;
     this.imageUrl = imageUrl;
     this.desc = desc;
-    this.price = price;
+    this.price = Number(price);
     this._id = new mongodb.ObjectId(id);
   }
 

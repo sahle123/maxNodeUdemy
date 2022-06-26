@@ -17,17 +17,20 @@ router.get('/products', shopController.getProducts);
 // /shop/products/<UUID> => GET 
 router.get('/products/:productId', shopController.getProductById);
 
-// // /shop/orders => GET
-// router.get('/orders', shopController.getOrders);
+// /shop/cart => GET
+router.get('/cart', shopController.getCart);
 
-// // /shop/cart => GET
-// router.get('/cart', shopController.getCart);
+// /shop/cart => POST
+router.post('/cart', shopController.postCart);
 
-// // /shop/cart => POST
-// router.post('/cart', shopController.postCart);
+// /shop/cart-delete-item => POST
+router.post('/cart-delete-item', shopController.postCartDeleteItem)
 
-// // /shop/cart-delete-item => POST
-// router.post('/cart-delete-item', shopController.postCartDeleteItem)
+// /shop/orders => GET
+router.get('/orders', shopController.getOrders);
+
+// /shop/orders => POST
+router.post('/create-order', shopController.postOrder);
 
 // // /shop/checkout => GET
 // router.get('/checkout', shopController.getCheckout);

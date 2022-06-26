@@ -16,6 +16,7 @@ const User = require('./models/user');
 const logger = require('./utils/logger');
 
 const PORT = 3000;
+const DUMMY_USER = '62b3764869cb41b2490ae626'; // DEV-NOTE: For testing...
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -30,12 +31,19 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //
 // TEMPORARY: automatic user login
+// Without this, the app cannot talk to Mongo. This is due to the
+// design that Max chose.
 app.use((req, res, next) => {
   User
-    .findById('62b3764869cb41b2490ae626')
+    .findById(DUMMY_USER)
     .then(user => {
-      req.user = user;
-      console.log(req);
+      req.user = new User(
+        user._id,
+        user.username,
+        user.email,
+        user.cart);
+      logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
+      //console.log(req.user);
       next();
     })
     .catch(err => { throw err; });
