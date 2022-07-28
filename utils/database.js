@@ -1,18 +1,17 @@
-const mongodb = require('mongodb');
+const mongoose = require('mongoose');
 const logger = require('./logger');
 
-const MongoClient = mongodb.MongoClient;
-const mongoUri = 'mongodb://localhost:27017/UDEMY_TEST';
+const mongoUri = 'mongodb://localhost:27017/UDEMY_TEST_2';
 
 // Database connection. Only used internally.
-let _db;
+//let _db;
 
-const mongoConnect = callback => {
-  MongoClient.connect(mongoUri)
+const mongooseConnect = callback => {
+  mongoose.connect(mongoUri)
 
-  .then(client => {
+  .then(result => {
     logger.plog("Successfully connected to Mongo!");
-    _db = client.db();
+    //_db = client.db();
     callback();
   })
 
@@ -22,11 +21,11 @@ const mongoConnect = callback => {
   });
 };
 
-const getDb = () => {
-  if (_db)
-    return _db;
-  throw `There are issues with the database! Could not connect!`;
-};
+// const getDb = () => {
+//   if (_db)
+//     return _db;
+//   throw `There are issues with the database! Could not connect!`;
+// };
 
-exports.mongoConnect = mongoConnect;
-exports.getDb = getDb;
+exports.mongooseConnect = mongooseConnect;
+//exports.getDb = getDb;

@@ -10,7 +10,7 @@ const errorRoutes = require('./routes/error');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-const mongoConnect = require('./utils/database').mongoConnect;
+const mongooseConnect = require('./utils/database').mongooseConnect;
 const User = require('./models/user');
 
 const logger = require('./utils/logger');
@@ -33,21 +33,21 @@ app.use(express.static(path.join(__dirname, "public")));
 // TEMPORARY: automatic user login
 // Without this, the app cannot talk to Mongo. This is due to the
 // design that Max chose.
-app.use((req, res, next) => {
-  User
-    .findById(DUMMY_USER)
-    .then(user => {
-      req.user = new User(
-        user._id,
-        user.username,
-        user.email,
-        user.cart);
-      logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
-      //console.log(req.user);
-      next();
-    })
-    .catch(err => { throw err; });
-});
+// app.use((req, res, next) => {
+//   User
+//     .findById(DUMMY_USER)
+//     .then(user => {
+//       req.user = new User(
+//         user._id,
+//         user.username,
+//         user.email,
+//         user.cart);
+//       logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
+//       //console.log(req.user);
+//       next();
+//     })
+//     .catch(err => { throw err; });
+// });
 
 //
 // ROUTING MIDDLEWARE
@@ -61,7 +61,7 @@ app.use('/', errorRoutes);
 // ----------------------------------------------------------------------------
 logger.log('Starting Node.js server...');
 
-mongoConnect(() => {
+mongooseConnect(() => {
   app.listen(PORT, () => {
     logger.log(`Listening on port ${PORT}`);
   });
