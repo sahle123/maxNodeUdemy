@@ -33,21 +33,21 @@ app.use(express.static(path.join(__dirname, "public")));
 // TEMPORARY: automatic user login
 // Without this, the app cannot talk to Mongo. This is due to the
 // design that Max chose.
-// app.use((req, res, next) => {
-//   User
-//     .findById(DUMMY_USER)
-//     .then(user => {
-//       req.user = new User(
-//         user._id,
-//         user.username,
-//         user.email,
-//         user.cart);
-//       logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
-//       //console.log(req.user);
-//       next();
-//     })
-//     .catch(err => { throw err; });
-// });
+app.use((req, res, next) => {
+  User
+    .findById(DUMMY_USER)
+    .then(user => {
+      req.user = new User(
+        user._id,
+        user.username,
+        user.email,
+        user.cart);
+      logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
+      //console.log(req.user);
+      next();
+    })
+    .catch(err => { throw err; });
+});
 
 //
 // ROUTING MIDDLEWARE
@@ -56,12 +56,27 @@ app.use('/shop', shopRoutes);
 app.use('/', errorRoutes);
 
 
-
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 logger.log('Starting Node.js server...');
 
 mongooseConnect(() => {
+
+  // Make a default user if none exist.
+  User
+    .findOne()
+    .then(user => {
+      if(!user) {
+        const user = new User({
+          name: "Sal",
+          email: "dummy@email.com",
+          cart: {
+            items: []
+          }
+        });
+      }
+    });
+
   app.listen(PORT, () => {
     logger.log(`Listening on port ${PORT}`);
   });

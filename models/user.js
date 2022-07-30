@@ -1,5 +1,45 @@
-// // User login model.
-// // DEV-NOTE: This does NOT have authentication yet.
+/* 
+* User login model.
+* DEV-NOTE: This does NOT have authentication yet.
+*/
+
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const logger = require('../utils/logger');
+
+// Documents to access in MongoDB.
+const _USERS = 'users';
+const _PRODUCTS = 'products';
+const _ORDERS = 'orders';
+
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  cart: {
+    items: [
+      {
+        productId: {
+          type: Schema.Types.ObjectId,
+          required: true
+        },
+        quantity: {
+          type: Number,
+          required: true
+        }
+      }]
+  }
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+
 
 // const mongodb = require('mongodb');
 
@@ -17,7 +57,7 @@
 //   // _id: mongodb.ObjectId()
 //   // username: string
 //   // email: string
-//   // cart: [items] 
+//   // cart: [items]
 //   constructor(id, username, email, cart) {
 //     this._id = new mongodb.ObjectId(id);
 //     this.username = username;
@@ -146,7 +186,7 @@
 //   }
 
 //   // Same as addOrder() but checks if the products in the cart still exists
-//   // in the database. 
+//   // in the database.
 //   // For cases where some products have been removed or modified,
 //   // this will inform the user the database has changed and therefore
 //   // the cart will be reset.

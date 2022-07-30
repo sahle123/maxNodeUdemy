@@ -1,11 +1,12 @@
-// Controller for anything related to admin services.
-const mongodb = require('mongodb');
+/*
+* Controller for anything related to admin services.
+*/
 
 const logger = require('../utils/logger');
 
 const errorController = require('./error');
 
-const B = require('../utils/basic');
+//const B = require('../utils/basic');
 const Product = require('../models/product');
 
 
@@ -22,7 +23,13 @@ exports.postAddProduct = (req, res, next) => {
   const desc = req.body.desc;
   const price = req.body.price;
 
-  const product = new Product(title, imageUrl, desc, price, null);
+  const product = new Product({
+    title: title,
+    price: price,
+    desc: desc,
+    imageUrl: imageUrl
+  });
+  
   product
     .save()
     .then(result => { res.redirect('/admin/products'); })
@@ -31,7 +38,7 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product
-    .fetchAll()
+    .find()
     .then(products => {
       res.render('admin/products', {
         prods: products,
@@ -52,7 +59,7 @@ exports.getEditProduct = (req, res, next) => {
 
   const prodId = req.params.productId;
   Product
-    .getProductById(prodId)
+    .findById(prodId)
     .then(product => {
       if (!product) {
         req.params.errorMsg = "Could not find product";
@@ -70,15 +77,16 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const updatedProduct = new Product(
-    req.body.title,
-    req.body.imageUrl,
-    req.body.desc,
-    req.body.price,
-    req.body.productId);
 
-  updatedProduct
-    .update()
+  Product
+    .findById(req.body.productId)
+    .then(product => {
+      product.title = req.body.title;
+      product.imageUrl = req.body.imageUrl;
+      product.desc = req.body.desc;
+      product.price = req.body.price;
+      product.save();
+    })
     .then(result => { res.redirect('/admin/products'); })
     .catch(err => logger.logError(err));
 };
@@ -93,8 +101,11 @@ exports.postDeleteProduct = (req, res, next) => {
   else {
     const prodId = req.body.productId;
     Product
-      .deleteProductById(prodId)
+      .findByIdAndRemove(prodId)
       .then(result => { res.redirect('/admin/products'); })
-      .catch(err => { throw err; });
+      .catch(err => { 
+        logger.logError(err);
+        throw err; 
+      });
   }
 };

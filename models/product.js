@@ -13,7 +13,7 @@ const productSchema = new Schema({
     type: Number,
     required: true
   },
-  description: {
+  desc: {
     type: String,
     required: true
   },
@@ -22,6 +22,14 @@ const productSchema = new Schema({
     required: true
   }
 });
+
+// Models in Mongoose need to be named along with its schema.
+module.exports = mongoose.model('Product', productSchema);
+
+
+//
+// DEV-NOTE: old, MongoDB code
+//
 
 // const mongodb = require('mongodb');
 

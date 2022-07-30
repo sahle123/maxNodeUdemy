@@ -1,12 +1,13 @@
-// Controller for anything related to the shop services.
+/*
+* Controller for anything related to shop services.
+*/
 const logger = require('../utils/logger');
-
 const Product = require('../models/product');
 
 
 exports.getProducts = (req, res, next) => {
   Product
-    .fetchAll()
+    .find()
     .then(products => {
       res.render('shop/product-list', {
         prods: products,
@@ -22,7 +23,7 @@ exports.getProductById = (req, res, next) => {
   const prodId = req.params.productId;
 
   Product
-    .getProductById(prodId)
+    .findById(prodId)
     .then(product => {
       res.render('shop/product-detail', {
         pageTitle: 'Product details',
@@ -34,7 +35,7 @@ exports.getProductById = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
   Product
-    .fetchAll()
+    .find()
     .then(products => {
       res.render('shop/index', {
         prods: products,
