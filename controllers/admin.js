@@ -17,28 +17,11 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-exports.postAddProduct = (req, res, next) => {
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const desc = req.body.desc;
-  const price = req.body.price;
-
-  const product = new Product({
-    title: title,
-    price: price,
-    desc: desc,
-    imageUrl: imageUrl
-  });
-  
-  product
-    .save()
-    .then(result => { res.redirect('/admin/products'); })
-    .catch(err => logger.logError(err));
-};
-
 exports.getProducts = (req, res, next) => {
   Product
     .find()
+    // .select('tittle price -desc -_id')
+    // .populate('userId', 'email')
     .then(products => {
       res.render('admin/products', {
         prods: products,
@@ -76,6 +59,27 @@ exports.getEditProduct = (req, res, next) => {
     .catch(err => logger.logError(err));
 };
 
+exports.postAddProduct = (req, res, next) => {
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const desc = req.body.desc;
+  const price = req.body.price;
+  const userId = req.user._id;
+
+  const product = new Product({
+    title: title,
+    price: price,
+    desc: desc,
+    imageUrl: imageUrl,
+    userId: userId
+  });
+  
+  product
+    .save()
+    .then(result => { res.redirect('/admin/products'); })
+    .catch(err => logger.logError(err));
+};
+
 exports.postEditProduct = (req, res, next) => {
 
   Product
@@ -85,6 +89,7 @@ exports.postEditProduct = (req, res, next) => {
       product.imageUrl = req.body.imageUrl;
       product.desc = req.body.desc;
       product.price = req.body.price;
+      product.userId = req.user._id;
       product.save();
     })
     .then(result => { res.redirect('/admin/products'); })

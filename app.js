@@ -36,12 +36,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
   User
     .findById(DUMMY_USER)
-    .then(user => {
-      req.user = new User(
-        user._id,
-        user.username,
-        user.email,
-        user.cart);
+    .then(resultantUser => {
+      req.user = resultantUser
       logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
       //console.log(req.user);
       next();

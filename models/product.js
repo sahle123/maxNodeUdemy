@@ -1,24 +1,16 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
 
 // Define schema for the Product model that we will use
 // within Mongoose.
 const productSchema = new Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  desc: {
-    type: String,
-    required: true
-  },
-  imageUrl: {
-    type: String,
+  title: { type: String, required: true },
+  price: { type: Number, required: true },
+  desc: { type: String, required: true },
+  imageUrl: { type: String, required: true },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   }
 });
@@ -95,8 +87,8 @@ module.exports = mongoose.model('Product', productSchema);
 //     // N.B. the .find() method does NOT return a promise, but rather a cursor.
 //     // A cursor is a subset of all the data returned. This is important
 //     // when working with larger data sets since loading the whole collection
-//     // into memory may not be physically possible. 
-//     // Converting to an array will give all the whole data set. Only do this 
+//     // into memory may not be physically possible.
+//     // Converting to an array will give all the whole data set. Only do this
 //     // if you KNOW that the returned collection is fairly small (i.e. ~100 docs).
 //     return db.collection('dummy')
 //       .find()

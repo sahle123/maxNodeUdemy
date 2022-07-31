@@ -2,19 +2,14 @@
 * User login model.
 * DEV-NOTE: This does NOT have authentication yet.
 */
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const logger = require('../utils/logger');
 
-// Documents to access in MongoDB.
-const _USERS = 'users';
-const _PRODUCTS = 'products';
-const _ORDERS = 'orders';
 
 const userSchema = new Schema({
-  name: {
+  username: {
     type: String,
     required: true
   },
@@ -27,6 +22,7 @@ const userSchema = new Schema({
       {
         productId: {
           type: Schema.Types.ObjectId,
+          ref: 'Product',
           required: true
         },
         quantity: {
@@ -36,6 +32,56 @@ const userSchema = new Schema({
       }]
   }
 });
+
+// The 'methods' property in mongoose.Schema allows us to create our own 
+// methods that we can call from the object.
+// N.B. We do not use an arrow function to make sure that that the 
+// 'this' keyword refers to the 'userSchema' object in this context.
+//
+// Adds a cart item to the current user's cart.
+userSchema.methods.addToCart = function (product) {
+  // Check if the product is already in the cart.
+  const cartProductIndex = this.cart.items.findIndex(cp => {
+    return cp.productId.toString() === product._id.toString();
+  });
+
+  let newQuantity = 1;
+  const updatedCartItems = [...this.cart.items];
+
+  // Update cart quantity
+  if (cartProductIndex >= 0) {
+    newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+    updatedCartItems[cartProductIndex].quantity = newQuantity;
+  }
+  // Otherwise, add new item to cart.
+  else {
+    updatedCartItems.push({
+      productId: product._id,
+      quantity: newQuantity
+    });
+  }
+
+  const updatedCart = { items: updatedCartItems };
+  this.cart = updatedCart;
+
+  return this.save();
+}
+
+// Removes an item (regardless of quantity) from the current
+// user's cart.
+userSchema.methods.removeFromCart = function (productId) {
+  const updatedCartItems = this.cart.items.filter(item => {
+    return item.productId.toString() !== productId.toString()
+  });
+  this.cart.items = updatedCartItems;
+  return this.save();
+}
+
+// Clears the current user's cart.
+userSchema.methods.clearCart = function () {
+  this.cart = { items: [] };
+  return this.save();
+}
 
 module.exports = mongoose.model('User', userSchema);
 
