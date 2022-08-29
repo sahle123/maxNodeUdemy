@@ -33,6 +33,7 @@ const userSchema = new Schema({
   }
 });
 
+
 // The 'methods' property in mongoose.Schema allows us to create our own 
 // methods that we can call from the object.
 // N.B. We do not use an arrow function to make sure that that the 

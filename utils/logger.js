@@ -6,7 +6,7 @@ exports.logError = (errMessage) => {
 
 // Informational logs
 exports.log = (message) => {
-  console.log("[ ] Info:", String(message));
+  console.log("[i]:", String(message));
 };
 
 // Informational log, but with a '+' sign. Indicating a positive message.

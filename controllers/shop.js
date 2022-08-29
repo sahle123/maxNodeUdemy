@@ -16,7 +16,7 @@ exports.getProducts = (req, res, next) => {
         hasProducts: products.length > 0
       });
     })
-    .catch(err => logger.logError(err));;
+    .catch(err => logger.logError(err));
 };
 
 exports.getProductById = (req, res, next) => {
