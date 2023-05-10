@@ -7,14 +7,16 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js"
   },
-  "author": "Sal",
+  "author": "Sal Alturaigi",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.16"
   },
   "dependencies": {
+    "connect-mongodb-session": "^3.1.1",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
+    "express-session": "^1.17.3",
     "mongodb": "^4.7.0",
     "mongoose": "^6.5.0",
     "uuid": "^8.3.2"

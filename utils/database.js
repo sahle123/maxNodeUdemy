@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
 const logger = require('./logger');
 
-const database = 'UDEMY_TEST_2';
-const mongoUri = `mongodb://localhost:27017/${database}`;
+//
+// Constants
+const DATABASE = 'UDEMY_TEST_2';
+const MONGODB_URI = `mongodb://localhost:27017/${DATABASE}`;
 
 
 const mongooseConnect = callback => {
   mongoose
-    .connect(mongoUri)
+    .connect(MONGODB_URI)
     .then(result => {
       logger.plog("Successfully connected to Mongo!");
       callback();
@@ -19,3 +21,4 @@ const mongooseConnect = callback => {
 };
 
 exports.mongooseConnect = mongooseConnect;
+exports.MONGODB_URI = MONGODB_URI;

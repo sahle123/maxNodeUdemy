@@ -10,16 +10,23 @@ exports.get400 = (req, res, next) => {
   res.status(400)
     .render('errors/400', { 
       pageTitle: 'Bad Request',
+      isAuthenticated: req.isLoggedIn,
       errorMsg: msg
     });
 }
 
 exports.get404 = (req, res, next) => {
   res.status(404)
-    .render('errors/404', { pageTitle: 'Page Not Found' });
+    .render('errors/404', { 
+      isAuthenticated: req.isLoggedIn,
+      pageTitle: 'Page Not Found'
+    });
 };
 
 exports.get501 = (req, res, next) => {
   res.status(501)
-    .render('errors/501', { pageTitle: 'Not Implemented' });
+    .render('errors/501', {
+      isAuthenticated: req.isLoggedIn,
+      pageTitle: 'Not Implemented' 
+    });
 };
