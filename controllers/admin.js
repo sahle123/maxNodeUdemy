@@ -13,7 +13,7 @@ const Product = require('../models/product');
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: "Admin - Add Product",
-    isAuthenticated: req.isLoggedIn,
+    isAuthenticated: req.session.isLoggedIn,
     editing: false
   });
 };
@@ -27,7 +27,7 @@ exports.getProducts = (req, res, next) => {
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin - Products',
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
         hasProducts: products.length > 0
       });
     })
@@ -54,7 +54,7 @@ exports.getEditProduct = (req, res, next) => {
         res.render('admin/edit-product', {
           pageTitle: 'Admin - Edit a product',
           editing: editMode,
-          isAuthenticated: req.isLoggedIn,
+          isAuthenticated: req.session.isLoggedIn,
           product: product
         });
       }
@@ -67,7 +67,7 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const desc = req.body.desc;
   const price = req.body.price;
-  const userId = req.user._id;
+  const userId = req.session.user._id;
 
   const product = new Product({
     title: title,
@@ -92,7 +92,7 @@ exports.postEditProduct = (req, res, next) => {
       product.imageUrl = req.body.imageUrl;
       product.desc = req.body.desc;
       product.price = req.body.price;
-      product.userId = req.user._id;
+      product.userId = req.session.user._id;
       product.save();
     })
     .then(result => { res.redirect('/admin/products'); })

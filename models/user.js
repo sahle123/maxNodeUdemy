@@ -7,7 +7,8 @@ const Schema = mongoose.Schema;
 
 const logger = require('../utils/logger');
 
-
+//
+// Schemata
 const userSchema = new Schema({
   username: {
     type: String,
@@ -34,7 +35,7 @@ const userSchema = new Schema({
 });
 
 
-// The 'methods' property in mongoose.Schema allows us to create our own 
+// The 'methods' property in mongoose. Schema allows us to create our own 
 // methods that we can call from the object.
 // N.B. We do not use an arrow function to make sure that that the 
 // 'this' keyword refers to the 'userSchema' object in this context.

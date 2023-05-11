@@ -10,7 +10,7 @@ exports.get400 = (req, res, next) => {
   res.status(400)
     .render('errors/400', { 
       pageTitle: 'Bad Request',
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isLoggedIn,
       errorMsg: msg
     });
 }
@@ -18,7 +18,7 @@ exports.get400 = (req, res, next) => {
 exports.get404 = (req, res, next) => {
   res.status(404)
     .render('errors/404', { 
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isLoggedIn,
       pageTitle: 'Page Not Found'
     });
 };
@@ -26,7 +26,7 @@ exports.get404 = (req, res, next) => {
 exports.get501 = (req, res, next) => {
   res.status(501)
     .render('errors/501', {
-      isAuthenticated: req.isLoggedIn,
+      isAuthenticated: req.session.isLoggedIn,
       pageTitle: 'Not Implemented' 
     });
 };

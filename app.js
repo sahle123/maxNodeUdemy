@@ -55,17 +55,17 @@ app.use(session({
 // TEMPORARY: automatic user login
 // Without this, the app cannot talk to Mongo. This is due to the
 // design that Max chose for now.
-app.use((req, res, next) => {
-  User
-    .findById(DUMMY_USER)
-    .then(resultantUser => {
-      req.user = resultantUser;
-      logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
-      //console.log(req.user);
-      next();
-    })
-    .catch(err => { throw err; });
-});
+// app.use((req, res, next) => {
+//   User
+//     .findById(DUMMY_USER)
+//     .then(resultantUser => {
+//       req.user = resultantUser;
+//       logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
+//       //console.log(req.user);
+//       next();
+//     })
+//     .catch(err => { throw err; });
+// });
 
 //
 // ROUTING MIDDLEWARE
