@@ -51,7 +51,7 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
-  await req.session.user
+  await req.user
     .populate('cart.items.productId')
     .then(user => {
       res.render('shop/cart', {
@@ -65,7 +65,7 @@ exports.getCart = async (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
   Order
-    .find({"user.userId": req.session.user._id})
+    .find({"user.userId": req.user._id})
     .then(orders => {
        res.render('shop/orders', {
         pageTitle: 'Orders',
@@ -79,7 +79,7 @@ exports.getOrders = (req, res, next) => {
 exports.postCartDeleteItem = (req, res, next) => {
   const prodId = req.body.productId;
 
-  req.session.user
+  req.user
     .removeFromCart(prodId)
     .then(result => { res.redirect('/shop/cart'); })
     .catch(err => console.log(err));
@@ -91,7 +91,7 @@ exports.postCart = (req, res, next) => {
   Product
     .findById(prodId)
     .then(product => {
-      return req.session.user.addToCart(product);
+      return req.user.addToCart(product);
     })
     .then(result => {
       logger.plog("Added product to cart!");
@@ -101,7 +101,7 @@ exports.postCart = (req, res, next) => {
 };
 
 exports.postOrder = async (req, res, next) => {
-  await req.session.user
+  await req.user
     .populate('cart.items.productId')
     .then(user => {
       const userProducts = user.cart.items.map(i => {
@@ -109,14 +109,14 @@ exports.postOrder = async (req, res, next) => {
       });
       const order = new Order({
         user: {
-          username: req.session.user.username,
-          userId: req.session.user._id
+          username: req.user.username,
+          userId: req.user._id
         },
         products: userProducts
       });
       return order.save();
     })
-    .then(() => { return req.session.user.clearCart(); })
+    .then(() => { return req.user.clearCart(); })
     .then(() => { res.redirect('/shop/orders') })
     .catch(err => console.log(err));
 };

@@ -16,16 +16,34 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
     
     // TEMPORARY: automatic user login.
-    User.findById('645ce56e5e18e5e52347b3c4')    
+    User.findById('62b3764869cb41b2490ae626')    
         .then(user => {
             req.session.isLoggedIn = true;
             req.session.user = user;
-            //next();
-            res.redirect('/shop');
+            // Not always needed, but in scenarios where latency can affect the result, this is a good idea to call.
+            // i.e. res.redirect() will run regardless if the session data was finished writing to MongoDB or not.
+            req.session.save(((err) => {
+                if(err) {
+                    logger.logError(err);
+                }
+                res.redirect('/shop');
+            }));
+
+            //res.redirect('/shop');
         })
         .catch(err => logger.logError(err));
 
     // Setting cookie.
     //res.setHeader('Set-Cookie', 'loggedIn=true');
     //res.redirect('/shop');
+}
+
+exports.postLogout = (req, res, next) => {
+    // This 'destroy' method is provided by express's session library.
+    req.session.destroy(err => {
+        if(err) {
+            logger.logError(err);
+        }            
+        res.redirect('/shop');
+    });
 }

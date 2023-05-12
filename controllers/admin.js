@@ -67,7 +67,7 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const desc = req.body.desc;
   const price = req.body.price;
-  const userId = req.session.user._id;
+  const userId = req.user._id;
 
   const product = new Product({
     title: title,
@@ -92,7 +92,7 @@ exports.postEditProduct = (req, res, next) => {
       product.imageUrl = req.body.imageUrl;
       product.desc = req.body.desc;
       product.price = req.body.price;
-      product.userId = req.session.user._id;
+      product.userId = req.user._id;
       product.save();
     })
     .then(result => { res.redirect('/admin/products'); })

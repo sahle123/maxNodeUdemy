@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 //app.use(express.static(path.join(rootDir, "public")));
 // For session management middleware.
-// Note: cookies are client-side. Sessions are server-side.
+// N.B. cookies are client-side. Sessions are server-side.
 app.use(session({
   secret: 'always a beginner', // for signing the hash that is secretly stored in the cookie.
   resave: false,
@@ -50,6 +50,24 @@ app.use(session({
     // Can add cookie configurations here...
   }
 }));
+
+// For getting session data and conforming to a mongoose model
+// that lets us use mongoose methods.
+app.use((req, res, next) => {
+
+  // Non-logged in user.
+  if (!req.session.user) {
+    return next();
+  }
+
+  // Logged in user.
+  User.findById(req.session.user._id)
+    .then(user => {
+        req.user = user; // This will give us the mongoose model that lets us use mongoose methods.
+        next();
+    })
+    .catch(err => logger.logError(err));
+});
 
 //
 // TEMPORARY: automatic user login
