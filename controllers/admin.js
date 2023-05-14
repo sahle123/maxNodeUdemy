@@ -13,7 +13,6 @@ const Product = require('../models/product');
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: "Admin - Add Product",
-    isAuthenticated: req.session.isLoggedIn,
     editing: false
   });
 };
@@ -27,7 +26,6 @@ exports.getProducts = (req, res, next) => {
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin - Products',
-        isAuthenticated: req.session.isLoggedIn,
         hasProducts: products.length > 0
       });
     })
@@ -54,7 +52,6 @@ exports.getEditProduct = (req, res, next) => {
         res.render('admin/edit-product', {
           pageTitle: 'Admin - Edit a product',
           editing: editMode,
-          isAuthenticated: req.session.isLoggedIn,
           product: product
         });
       }

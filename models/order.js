@@ -10,7 +10,7 @@ const orderSchema = new Schema({
     quantity: { type: Number, required: true }
   }],
   user: {
-    username: { type: String, required: true },
+    email: { type: String, required: true },
     userId: {
       type: Schema.Types.ObjectId,
       required: true,

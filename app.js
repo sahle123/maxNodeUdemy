@@ -3,19 +3,21 @@ const path = require('path');
 //
 // Constants
 const PORT = 3000;
-const DUMMY_USER = '62b3764869cb41b2490ae626'; // DEV-NOTE: For testing...
 const MONGODB_URI = require('./utils/database').MONGODB_URI;
 
 const express = require('express');
 const session = require('express-session'); // For session management.
 const mongooseConnect = require('./utils/database').mongooseConnect;
 const MongoDBStore = require('connect-mongodb-session')(session); // For light-weight session storage in MongoDB.
+const csrf = require('csurf'); // **** DEV-NOTE: csurf is deprecated and a different package should be used for CSRF protection. ****
+const connectFlash = require('connect-flash'); // Handy package for error messages.
 
 const app = express();
 const seshStorage = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'UserSessions'
-})
+});
+const csrfProtection = csrf({ }); // The default settings work fine for our case.
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -35,10 +37,12 @@ const logger = require('./utils/logger');
 //
 // DEFAULT MIDDLEWARE (i.e. runs on every request).
 app.use(express.urlencoded({ extended: true }));
+
 // Allows the serving of static files in a certain directory. This is only read 
 // access. Typically, the 'public' folder is where all the content is stored.
 app.use(express.static(path.join(__dirname, "public")));
 //app.use(express.static(path.join(rootDir, "public")));
+
 // For session management middleware.
 // N.B. cookies are client-side. Sessions are server-side.
 app.use(session({
@@ -46,12 +50,17 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: seshStorage,
-  cookie: {
-    // Can add cookie configurations here...
-  }
+  cookie: { /* Can add cookie configurations here... */ }
 }));
 
-// For getting session data and conforming to a mongoose model
+// It's important to call the CSRF protection after the session since we need the session 
+// to do our checking.
+app.use(csrfProtection);
+
+// Add connect-flash functionality to our app.
+app.use(connectFlash()); 
+
+// For getting session data and conforming it into a mongoose model
 // that lets us use mongoose methods.
 app.use((req, res, next) => {
 
@@ -69,21 +78,14 @@ app.use((req, res, next) => {
     .catch(err => logger.logError(err));
 });
 
-//
-// TEMPORARY: automatic user login
-// Without this, the app cannot talk to Mongo. This is due to the
-// design that Max chose for now.
-// app.use((req, res, next) => {
-//   User
-//     .findById(DUMMY_USER)
-//     .then(resultantUser => {
-//       req.user = resultantUser;
-//       logger.plog(`User ${DUMMY_USER} has logged in successfully!`);
-//       //console.log(req.user);
-//       next();
-//     })
-//     .catch(err => { throw err; });
-// });
+// Configuring all views to have these local variables available.
+app.use((req, res, next) => {
+  // The 'locals' field is specific to express.js.
+  // Read up more on this later...
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 //
 // ROUTING MIDDLEWARE
@@ -98,22 +100,6 @@ app.use('/', errorRoutes);
 logger.log('Starting Node.js server...');
 
 mongooseConnect(() => {
-
-  // Make a default user if none exist.
-  User
-    .findOne()
-    .then(user => {
-      if(!user) {
-        const user = new User({
-          name: "Sal",
-          email: "dummy@email.com",
-          cart: {
-            items: []
-          }
-        });
-      }
-    });
-
   app.listen(PORT, () => {
     logger.log(`Listening on port ${PORT}`);
   });

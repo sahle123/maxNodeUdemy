@@ -7,3 +7,7 @@ _Note that if anyone decides to use this code, be warned that it is not 1-to-1 t
 ### Starting
 
 * Type `nodemon` in the console to get started with debugging. Or you can use `npm start`.
+
+### Issues
+
+* `csurf` is deprecated and should be swapped out with a different CSRF protection library.
