@@ -6,27 +6,20 @@ const User = require('../models/user');
 
 // Utils
 const logger = require('../utils/logger');
+const basic = require('../utils/basic');
 
 
-exports.getLogin = (req, res, next) => {
-    let message = req.flash('error');
-    if (message.length > 0) { 
-        message = message[0]; 
-    }
-    else { 
-        message = null; 
-    }
-    
+exports.getLogin = (req, res, next) => {    
     res.render('auth/login', {
-        //path: '/login',
         pageTitle: 'Login',
-        errorMessage: message
+        errorMessage: basic.getFlashErrorMsg(req.flash('error'))
     });
 };
 
 exports.getSignup = (req, res, next) => {
     res.render('auth/signup', {
-        pageTitle: 'Signup'
+        pageTitle: 'Signup',
+        errorMessage: basic.getFlashErrorMsg(req.flash('error'))
     });
 };
 
@@ -89,6 +82,7 @@ exports.postSignup = (req, res, next) => {
 
     // Password validation.
     if(password !== confirmPassword) {
+        req.flash('error', 'Passwords are mismatched. Please retype them again.');
         logger.logError('Passwords are mismatched!!!');
         logger.logError(password + " : " + confirmPassword);
         return res.redirect('/signup');
@@ -101,6 +95,7 @@ exports.postSignup = (req, res, next) => {
     .then(userDoc => { 
         // i.e. user already exists
         if(userDoc) {
+            req.flash('error', 'Email already exists. Please choose another email address.');
             logger.logError(`This user (${email}) already exists!`);
             return res.redirect('/signup');
         }
